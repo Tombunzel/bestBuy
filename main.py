@@ -11,6 +11,7 @@ best_buy = store.Store(product_list)
 
 
 def print_menu():
+    """prints the cli menu"""
     print("\n"
           "   Store Menu\n"
           "   ----------\n"
@@ -21,12 +22,14 @@ def print_menu():
 
 
 def print_all_products(store_obj):
+    """prints all products in store"""
     all_products = store_obj.get_all_products()
     for index, product in enumerate(all_products):
         print(f"{index + 1}. {product.show()}")
 
 
 def convert_to_product_index(product_number):
+    """converts user input product number and returns a product index"""
     try:
         chosen_product_index = int(product_number) - 1
     except ValueError:
@@ -36,6 +39,7 @@ def convert_to_product_index(product_number):
 
 
 def get_product_index(all_products):
+    """gets a product index from the user"""
     while True:
         product_number = input("Which product # do you want? ")
         if product_number == '':
@@ -50,6 +54,7 @@ def get_product_index(all_products):
 
 
 def get_product_amount():
+    """gets a product amount to be bought"""
     while True:
         amount = input("What amount do you want? ")
         if amount == '':
@@ -63,11 +68,14 @@ def get_product_amount():
 
 
 def print_total_items(store_obj):
+    """print total quantity of items in the store"""
     total_quantity = store_obj.get_total_quantity()
     print(f"Total of {total_quantity} items in store.")
 
 
 def place_order(store_obj):
+    """allows the user to place an order by item number and chosen quantity,
+    finally showing the total amount to pay"""
     print("------")
     shopping_list = []
     all_products = store_obj.get_all_products()
@@ -81,16 +89,21 @@ def place_order(store_obj):
         if product_index == '':
             break
         shopping_list.append((all_products[product_index], amount))
-        print("Product added to list!\n")
+        print("Product(s) added to list!\n")
 
-    total = store_obj.order(shopping_list)
-    print("\n********\n"
-          f"\nOrder placed! Total payment: ${total}\n")
+    while True:
+        total = store.order(shopping_list)
+        if total is None:
+            break
+        print("\n********\n"
+              f"\nOrder placed! Total payment: ${total}\n")
+        break
 
     input("Press enter to continue shopping\n")
 
 
 def handle_menu_choice(user_choice, store_obj):
+    """handles the user's choice from the menu"""
     if user_choice == '1':
         print_all_products(store_obj)
 
@@ -108,10 +121,18 @@ def handle_menu_choice(user_choice, store_obj):
 
 
 def start(store_obj):
+    """prints the cli menu, gets user choice and handles it
+    until user chooses to exit the program"""
     while True:
         print_menu()
         user_choice = input("Please choose a number: ")
         handle_menu_choice(user_choice, store_obj)
 
 
-start(best_buy)
+def main():
+    """main function"""
+    start(best_buy)
+
+
+if __name__ == "__main__":
+    main()
