@@ -39,10 +39,15 @@ def start(store_obj):
                 chosen_product_number = input("Which product # do you want? ")
                 if not chosen_product_number:
                     break
+
                 try:
                     chosen_product_index = int(chosen_product_number) - 1
                 except ValueError:
-                    print("Please enter a product number")
+                    print("\nPlease enter a valid product number\n")
+                    continue
+
+                if chosen_product_index not in range(0, len(all_products)):
+                    print("\nProduct number doesn't exist.\n")
                     continue
 
                 try:
@@ -51,8 +56,12 @@ def start(store_obj):
                     print("Please enter an amount")
                     continue
 
-                shopping_list.append((all_products[chosen_product_index], amount))
-                print("Product added to list!\n")
+                try:
+                    shopping_list.append((all_products[chosen_product_index], amount))
+                    print("Product added to list!\n")
+                except IndexError:
+                    print("\nProduct number doesn't exist, please try again\n")
+                    continue
 
             total = store_obj.order(shopping_list)
             print("\n********\n"
