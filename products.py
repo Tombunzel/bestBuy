@@ -1,11 +1,21 @@
 class Product:
     """class Product for activating, showing and handling products"""
+
+    def check_init(self):
+        if not self.name:
+            raise ValueError("Product name can't be empty")
+        if self.price < 0:
+            raise ValueError("Product price can't be lower than 0")
+        if self.quantity < 0:
+            raise ValueError("Product quantity can't be lower than 0")
+
     def __init__(self, name, price, quantity):
         """constructor"""
         self.name = name
         self.price = price
         self.quantity = quantity
         self.active = True
+        self.check_init()
 
     def get_quantity(self):
         """returns quantity of a product"""
@@ -37,6 +47,7 @@ class Product:
         """returns the price to pay for a product in given quantity"""
         if self.quantity >= quantity:
             self.quantity -= quantity
+            if self.quantity == 0:
+                self.deactivate()
             return self.price * quantity
-        print("\nCouldn't complete purchase, not enough items in stock.\n")
-        return None
+        raise ValueError("Unable to buy quantity larger than in stock")
