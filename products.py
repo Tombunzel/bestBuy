@@ -1,5 +1,17 @@
-class Product:
+from abc import ABC, abstractmethod
+
+
+class Product(ABC):
     """class Product for activating, showing and handling products"""
+
+    def __init__(self, name, price, quantity, promotion=None):
+        """constructor"""
+        self.name = name
+        self.price = price
+        self.quantity = quantity
+        self.active = True
+        self.promotion = promotion
+        self.check_init()
 
     def check_init(self):
         if not self.name:
@@ -9,13 +21,11 @@ class Product:
         if self.quantity < 0:
             raise ValueError("Product quantity can't be lower than 0")
 
-    def __init__(self, name, price, quantity):
-        """constructor"""
-        self.name = name
-        self.price = price
-        self.quantity = quantity
-        self.active = True
-        self.check_init()
+    def get_promotion(self):
+        return self.promotion
+
+    def set_promotion(self, new_promotion):
+        self.promotion = new_promotion
 
     def get_quantity(self):
         """returns quantity of a product"""
@@ -41,34 +51,50 @@ class Product:
 
     def show(self):
         """returns a string of item name, price and available quantity"""
-        return f"{self.name}, Price: ${self.price}, Quantity: {self.quantity}"
+        if self.quantity == 0:
+            product_string = f"{self.name}, Price: ${self.price}, Quantity: Unlimited"
+        else:
+            product_string = f"{self.name}, Price: ${self.price}, Quantity: {self.quantity}"
+        if self.promotion:
+            return f"{product_string}, Promotion: {self.promotion.name}"
+        return product_string
 
     def buy(self, quantity):
         """returns the price to pay for a product in given quantity"""
-        if self.quantity >= quantity or self.quantity == 0:
+        if isinstance(self, LimitedProduct):
+            quantity = self.maximum
+            print(f"\nAutomatically corrected {self.name} amount to {self.maximum}.")
+            return self.price * quantity
+
+        if self.quantity >= quantity:
             self.quantity -= quantity
             if self.quantity == 0:
                 self.deactivate()
+            if self.promotion:
+                return self.promotion.apply_promotion(self, quantity)
             return self.price * quantity
+
+        if self.quantity == 0:
+            if self.promotion:
+                return self.promotion.apply_promotion(self, quantity)
+            return self.price * quantity
+
         raise ValueError("Unable to buy quantity larger than in stock")
 
 
-class NonStockedProduct(Product):
+class NonStockedProduct(Product, ABC):
     def __init__(self, name, price):
         super().__init__(name, price, quantity=0)
         self.name = name
         self.price = price
         self.quantity = 0
 
-    def show(self):
-        return f"{self.name}, Price: ${self.price}, Quantity: Unlimited"
 
-
-class LimitedProduct(Product):
+class LimitedProduct(Product, ABC):
     def __init__(self, name, price, quantity, maximum):
         super().__init__(name, price, quantity)
         self.maximum = maximum
 
     def show(self):
         return (f"{self.name}, Price: ${self.price}, Quantity: {self.quantity}, "
-                f"Maximum quantity per order: {self.maximum}")
+                f"Limited to {self.maximum} per order!")
