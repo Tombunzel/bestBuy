@@ -3,7 +3,15 @@ from abc import ABC, abstractmethod
 
 class Promotion(ABC):
     def __init__(self, name):
-        self.name = name
+        self._name = name
+
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, new_name):
+        self._name = new_name
 
     @abstractmethod
     def apply_promotion(self, product, quantity):
@@ -31,7 +39,7 @@ class ThirdOneFree(Promotion):
 class PercentDiscount(Promotion):
     def __init__(self, name, percentage):
         super().__init__(name)
-        self.percentage = percentage
+        self._percentage = percentage
 
     def apply_promotion(self, product, quantity):
-        return product.price * quantity * (1 - self.percentage / 100)
+        return product.price * quantity * (1 - self._percentage / 100)
