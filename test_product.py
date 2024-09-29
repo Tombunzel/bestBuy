@@ -8,7 +8,11 @@ def test_instantiate_product():
 
 def test_instantiate_product_invalid_details():
     with pytest.raises(ValueError):
-        products.Product("", 1500, 100)
+        assert products.Product("", 1500, 100)
+    with pytest.raises(ValueError):
+        assert products.Product("name", -100, 100)
+    with pytest.raises(ValueError):
+        assert products.Product("name", 100, -100)
 
 
 def test_product_deactivates():
@@ -30,4 +34,3 @@ def test_buy_too_much():
 
 
 pytest.main()
-
