@@ -4,24 +4,27 @@ import promotions
 import store
 
 # setup initial stock of inventory
-product_list = [ products.Product("MacBook Air M2", price=1450, quantity=100),
-                 products.Product("Bose QuietComfort Earbuds", price=250, quantity=500),
-                 products.Product("Google Pixel 7", price=500, quantity=250),
-                 products.NonStockedProduct("Windows License", price=125),
-                 products.LimitedProduct("Shipping", price=10, quantity=250, maximum=1)
-               ]
+mac = products.Product("MacBook Air M2", price=1450, quantity=100)
+bose = products.Product("Bose QuietComfort Earbuds", price=250, quantity=500)
+pixel = products.Product("Google Pixel 7", price=500, quantity=250)
+windows = products.NonStockedProduct("Windows License", price=125)
+shipping = products.LimitedProduct("Shipping", price=10, maximum=1, quantity=0)
+
 
 # Create promotion catalog
 second_half_price = promotions.SecondHalfPrice("Second Half price!")
 third_one_free = promotions.ThirdOneFree("Third One Free!")
 thirty_percent = promotions.PercentDiscount("30% off!", percentage=30)
+twenty_percent = promotions.PercentDiscount("20% off!", percentage=20)
 
 # Add promotions to products
-product_list[0].set_promotion(second_half_price)
-product_list[1].set_promotion(third_one_free)
-product_list[3].set_promotion(thirty_percent)
+mac.promotion = second_half_price
+bose.promotion = third_one_free
+pixel.promotion = thirty_percent
+windows.promotion = twenty_percent
 
-best_buy = store.Store(product_list)
+# Instantiate store class object
+best_buy = store.Store([mac, bose, pixel, windows, shipping])
 
 
 def print_menu():
@@ -39,7 +42,7 @@ def print_all_products(store_obj):
     """prints all products in store"""
     all_products = store_obj.get_all_products()
     for index, product in enumerate(all_products):
-        print(f"{index + 1}. {product.show()}")
+        print(f"{index + 1}. {product}")
 
 
 def convert_to_product_index(product_number):
@@ -83,7 +86,7 @@ def get_product_amount():
 
 def print_total_items(store_obj):
     """print total quantity of items in the store"""
-    total_quantity = store_obj.get_total_quantity()
+    total_quantity = store_obj.get_total_stock()
     print(f"Total of {total_quantity} items in store.")
 
 
@@ -106,11 +109,12 @@ def place_order(store_obj):
         print("Product(s) added to list!\n")
 
     while True:
-        total = store.order(shopping_list)
-        if total is None:
+        total = best_buy.order(shopping_list)
+        print("\n********")
+        if total == 0 or (len(shopping_list) == 1 and shopping_list[0][0].name == 'Shipping'):
+            print("\nShopping list empty, order was not placed.\n")
             break
-        print("\n********\n"
-              f"\nOrder placed! Total payment: ${total}\n")
+        print(f"\nOrder placed! Total payment: ${total}\n")
         break
 
     input("Press enter to continue shopping\n")
