@@ -1,5 +1,5 @@
 class Store:
-    """class Store for handling purchases and quantities etc."""
+    """class Store for handling purchases, quantities, etc."""
 
     def __init__(self, products):
         """constructor"""
@@ -7,10 +7,12 @@ class Store:
 
     @property
     def products(self):
+        """getter for products in store"""
         return self._products
 
     @products.setter
     def products(self, new_products):
+        """setter for products"""
         self._products = new_products
 
     def add_product(self, product):
@@ -22,7 +24,7 @@ class Store:
         self._products.remove(product)
 
     def get_total_stock(self):
-        """returns the total amount of items in store"""
+        """returns the total number of items in store"""
         total_stock = 0
         for product in self._products:
             total_stock += product.quantity
@@ -46,4 +48,5 @@ class Store:
         return total
 
     def __contains__(self, item):
+        """implement 'in' method on class objects"""
         return item in self.products
