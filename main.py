@@ -3,28 +3,33 @@ import products
 import promotions
 import store
 
-# setup initial stock of inventory
-mac = products.Product("MacBook Air M2", price=1450, quantity=100)
-bose = products.Product("Bose QuietComfort Earbuds", price=250, quantity=500)
-pixel = products.Product("Google Pixel 7", price=500, quantity=250)
-windows = products.NonStockedProduct("Windows License", price=125)
-shipping = products.LimitedProduct("Shipping", price=10, maximum=1, quantity=0)
+
+def setup_initial_inventory():
+    """setup initial stock of inventory"""
+    mac = products.Product("MacBook Air M2", price=1450, quantity=100)
+    bose = products.Product("Bose QuietComfort Earbuds", price=250, quantity=500)
+    pixel = products.Product("Google Pixel 7", price=500, quantity=250)
+    windows = products.NonStockedProduct("Windows License", price=125)
+    shipping = products.LimitedProduct("Shipping", price=10, maximum=1, quantity=0)
+    return mac, bose, pixel, windows, shipping
 
 
-# Create promotion catalog
-second_half_price = promotions.SecondHalfPrice("Second Half price!")
-third_one_free = promotions.ThirdOneFree("Third One Free!")
-thirty_percent = promotions.PercentDiscount("30% off!", percentage=30)
-twenty_percent = promotions.PercentDiscount("20% off!", percentage=20)
+def setup_promotions():
+    """Create promotion catalog"""
+    second_half_price = promotions.SecondHalfPrice("Second Half price!")
+    third_one_free = promotions.ThirdOneFree("Third One Free!")
+    thirty_percent = promotions.PercentDiscount("30% off!", percentage=30)
+    twenty_percent = promotions.PercentDiscount("20% off!", percentage=20)
+    return second_half_price, third_one_free, thirty_percent, twenty_percent
 
-# Add promotions to products
-mac.promotion = second_half_price
-bose.promotion = third_one_free
-pixel.promotion = thirty_percent
-windows.promotion = twenty_percent
 
-# Instantiate store class object
-best_buy = store.Store([mac, bose, pixel, windows, shipping])
+def assign_promotions_to_products(mac, bose, pixel, windows, second_half_price,
+                                  third_one_free, thirty_percent, twenty_percent):
+    """assigns promotion to some products"""
+    mac.promotion = second_half_price
+    bose.promotion = third_one_free
+    pixel.promotion = thirty_percent
+    windows.promotion = twenty_percent
 
 
 def print_menu():
@@ -109,7 +114,7 @@ def place_order(store_obj):
         print("Product(s) added to list!\n")
 
     while True:
-        total = best_buy.order(shopping_list)
+        total = store_obj.order(shopping_list)
         print("\n********")
         if total == 0 or (len(shopping_list) == 1 and shopping_list[0][0].name == 'Shipping'):
             print("\nShopping list empty, order was not placed.\n")
@@ -140,7 +145,7 @@ def handle_menu_choice(user_choice, store_obj):
 
 def start(store_obj):
     """prints the cli menu, gets user choice and handles it
-    until user chooses to exit the program"""
+    until the user chooses to exit the program"""
     while True:
         print_menu()
         user_choice = input("Please choose a number: ")
@@ -148,7 +153,13 @@ def start(store_obj):
 
 
 def main():
-    """main function"""
+    """sets up initial inventory and promotions, assigns latter to former,
+    instantiates a store object and starts the store app"""
+    mac, bose, pixel, windows, shipping = setup_initial_inventory()
+    second_half_price, third_one_free, thirty_percent, twenty_percent = setup_promotions()
+    assign_promotions_to_products(mac, bose, pixel, windows, second_half_price,
+                                  third_one_free, thirty_percent, twenty_percent)
+    best_buy = store.Store([mac, bose, pixel, windows, shipping])
     start(best_buy)
 
 
