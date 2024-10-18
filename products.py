@@ -14,6 +14,7 @@ class Product(ABC):
         self.check_init()
 
     def check_init(self):
+        """check initialisation values"""
         if not self._name:
             raise ValueError("Name cannot be empty!")
         if self._price < 0:
@@ -23,42 +24,48 @@ class Product(ABC):
 
     @property
     def name(self):
+        """getter for name"""
         if not self._name:
             raise ValueError("Product name can't be empty")
         return self._name
 
     @name.setter
     def name(self, new_name):
+        """setter for name"""
         if not new_name:
             raise ValueError("Product name can't be empty")
         self._name = new_name
 
     @property
     def price(self):
+        """getter for price"""
         return self._price
 
     @price.setter
     def price(self, new_price):
+        """setter for price"""
         if new_price < 0:
             raise ValueError("Product price can't be lower than 0")
         self._price = new_price
 
     @property
     def promotion(self):
+        """getter for promotion"""
         return self._promotion
 
     @promotion.setter
     def promotion(self, new_promotion):
+        """setter for promotion"""
         self._promotion = new_promotion
 
     @property
     def quantity(self):
-        """returns quantity of a product"""
+        """getter for quantity"""
         return self._quantity
 
     @quantity.setter
     def quantity(self, quantity):
-        """set quantity of a product"""
+        """setter for quantity"""
         if quantity < 0:
             raise ValueError("Product quantity can't be lower than 0")
         if quantity == 0:
@@ -113,7 +120,9 @@ class Product(ABC):
 
 
 class NonStockedProduct(Product, ABC):
+    """class for products that have no stock quantity"""
     def __init__(self, name, price):
+        """initializer"""
         super().__init__(name, price, quantity=0)
         self._name = name
         self._price = price
@@ -121,11 +130,14 @@ class NonStockedProduct(Product, ABC):
 
 
 class LimitedProduct(Product, ABC):
+    """class for products that have limited order amount"""
     def __init__(self, name, price, quantity, maximum):
+        """initialize object"""
         super().__init__(name, price, quantity)
         self._maximum = maximum
 
     def __str__(self):
+        """str for printing of an object"""
         product_string = f'{self._name}, Price: ${self._price}'
 
         if self._quantity > 0:
